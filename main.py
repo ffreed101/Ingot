@@ -2,6 +2,8 @@ import sqlite3
 import json
 from models.User import User
 
+# TODO: Add a transactions attribute to user class that modifies the balance, as well as adding user-side functionality to add, edit, view, and remove transactions in user_menu. Transactions might be separate data table
+
 # SQLite functionality
 con = sqlite3.connect("database.db")
 cur = con.cursor()
@@ -31,7 +33,7 @@ def update_fixed_expenses(user, fixed_expenses):
     with con:
         cur.execute("""UPDATE users SET fixed_expenses = :fixed_expenses 
                     WHERE first = :first AND last = :last""", 
-                    {'first': user.first, 'last': user.last, 'fixed_expenses': user.fixed_expenses_str})
+                    {'first': user.first, 'last': user.last, 'fixed_expenses': fixed_expenses})
 
 def remove_user(user):
     with con:
