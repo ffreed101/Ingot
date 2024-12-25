@@ -83,7 +83,38 @@ def delete_transaction(transaction_id):
     with con:
         cur.execute("DELETE FROM transactions WHERE id = :transaction_id", {"transaction_id": transaction_id})
 
+def create_transaction():
+    pass
 
+def edit_transaction():
+    pass
+
+def display_all_transactions():
+    pass
+
+
+def transactions_menu(user):
+    # When selecting a transaction, make sure to display them to the user so they can pick an ID
+
+    while True:
+        print("Transactions Menu")
+        print("1. Add Transaction")
+        print("2. Edit Transaction")
+        print("3. View All Transactions")
+        print("4. Delete Transaction")
+        print("5. Back")
+        choice = int(input("Enter a choice: "))
+
+        match choice:
+            case 1:
+                create_transaction()
+            case 2:
+                edit_transaction()
+            case 3:
+                display_all_transactions()
+            case 4:
+                # Make input for parameter
+                delete_transaction()
 
 # Utility functions
 def list_users():
@@ -116,19 +147,21 @@ def user_menu():
             print(f"{user.first} {user.last}")
             print(f"Balance: {user.balance:.2f}")
             print("1. Edit balance")
-            print("2. Delete User")
-            print("3. Back")
+            print("2. Transactions")
+            print("3. Delete User")
+            print("4. Back")
             choice = int(input("Enter a choice: "))
             match choice:
                 case 1:
                     new_balance = float(input("Enter new balance: "))
                     user.balance = new_balance
                     update_balance(user, user.balance)
-                    
                 case 2:
+                    transactions_menu()
+                case 3:
                     remove_user(user)
                     break
-                case 3:
+                case 4:
                     break
     else:
         pass
