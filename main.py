@@ -20,23 +20,22 @@ try:
 except:
     print("User data found")
 
-try:
-    cur.execute("""CREATE TABLE transactions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER,
-                date TEXT,
-                category TEXT,
-                amount REAL,
-                note TEXT,
-                FOREIGN KEY (user_id) REFERENCES users (rowid)
-        )""")
-    print("Formatting transactions data...")
-except:
-    print("Transactions data found")
-
 def insert_user(user):
     with con:
         cur.execute("INSERT INTO users (first, last, balance, fixed_expenses) VALUES (:first, :last, :balance, :fixed_expenses)", {"first": user.first, "last": user.last, "balance": user.balance, "fixed_expenses": user.fixed_expenses_str})
+        try:
+            cur.execute("""CREATE TABLE transactions (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        user_id INTEGER,
+                        date TEXT,
+                        category TEXT,
+                        amount REAL,
+                        note TEXT,
+                        FOREIGN KEY (user_id) REFERENCES users (rowid)
+                )""")
+            print("Formatting transactions data...")
+        except:
+            print("Transactions data found")
 
 def update_balance(user, balance):
     with con:
@@ -118,7 +117,10 @@ def transactions_menu(user):
 
 # Utility functions
 def list_users():
-    print("Not Implemented")
+    cur.execute("SELECT first FROM users")
+    first_names = cur.fetchall()
+    for i in range(len(first_names)):
+        print(f"{i+1}. {first_names[i][0]}")
 
 # Program functionality
 def create_user():
