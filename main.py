@@ -1,95 +1,19 @@
 import sqlite3
 import json
-from models.User import User
-from models.Transaction import Transaction
+from models import session, User, Transaction
+
 # TODO: Add a transactions attribute to user class that modifies the balance, as well as adding user-side functionality to add, edit, view, and remove transactions in user_menu. Transactions might be separate data table
-
-# SQLite functionality
-con = sqlite3.connect("database.db")
-cur = con.cursor()
-
-try:
-    cur.execute("""CREATE TABLE users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                first text,
-                last text,
-                balance real,
-                fixed_expenses text
-        )""")
-    print("Formatting user data...")
-except:
-    print("User data found")
-
-def insert_user(user):
-    with con:
-        cur.execute("INSERT INTO users (first, last, balance, fixed_expenses) VALUES (:first, :last, :balance, :fixed_expenses)", {"first": user.first, "last": user.last, "balance": user.balance, "fixed_expenses": user.fixed_expenses_str})
-        try:
-            cur.execute("""CREATE TABLE transactions (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        user_id INTEGER,
-                        date TEXT,
-                        category TEXT,
-                        amount REAL,
-                        note TEXT,
-                        FOREIGN KEY (user_id) REFERENCES users (rowid)
-                )""")
-            print("Formatting transactions data...")
-        except:
-            print("Transactions data found")
-
-def update_balance(user, balance):
-    with con:
-        cur.execute("""UPDATE users SET balance = :balance 
-                    WHERE first = :first AND last = :last""", 
-                    {'first': user.first, 'last': user.last, 'balance': balance})
         
-def update_fixed_expenses(user, fixed_expenses):
-    with con:
-        cur.execute("""UPDATE users SET fixed_expenses = :fixed_expenses 
-                    WHERE first = :first AND last = :last""", 
-                    {'first': user.first, 'last': user.last, 'fixed_expenses': fixed_expenses})
 
-def remove_user(user):
-    with con:
-        cur.execute("DELETE from users WHERE first = :first AND last = :last", 
-                    {"first": user.first, "last": user.last})
-
-def get_user_by_name(first_name):
-    cur.execute("SELECT * FROM users WHERE first=:first", {"first": first_name})
-    return cur.fetchone()
-
-def get_user_by_id(user_id):
-    cur.execute("SELECT * FROM users WHERE id=:id", {"id": user_id})
-    return cur.fetchone()
-
-# Transactions CRUD
-
-def insert_transaction(transaction):
-    with con:
-        cur.execute("""INSERT INTO transactions (user_id, date, category, amount, note)
-                       VALUES (:user_id, :date, :category, :amount, :note)""",
-                    {'user_id': transaction.user_id,
-                     'date': transaction.date,
-                     'category': transaction.category,
-                     'amount': transaction.amount,
-                     'note': transaction.note})
-
-def get_transactions_by_user(user_id):
-    cur.execute("SELECT * FROM transactions WHERE user_id = :user_id", {"user_id": user_id})
-    return cur.fetchall()
-
-def delete_transaction(transaction_id):
-    with con:
-        cur.execute("DELETE FROM transactions WHERE id = :transaction_id", {"transaction_id": transaction_id})
-
-def create_transaction():
-    pass
-
-def edit_transaction():
-    pass
-
-def display_all_transactions():
-    pass
+def create_transaction(user):
+    user_id = user.user_id
+    date = "Not Implemented"
+    category = get_category()
+    amount = float(input("Enter transaction amount: "))
+    note = input("Add a note: ")
+    new_transaction = Transaction(user_id, date, category, amount, note)
+    session.add(new_transaction)
+    session.commit()
 
 
 def transactions_menu(user):
@@ -106,41 +30,54 @@ def transactions_menu(user):
 
         match choice:
             case 1:
-                create_transaction()
+                create_transaction(user)
             case 2:
-                edit_transaction()
+                pass
             case 3:
-                display_all_transactions()
+                pass
             case 4:
-                # Make input for parameter
-                delete_transaction()
+                pass
 
 # Utility functions
-def list_users():
-    cur.execute("SELECT first FROM users")
-    first_names = cur.fetchall()
-    for i in range(len(first_names)):
-        print(f"{i+1}. {first_names[i][0]}")
+
+def get_category():
+    while True:
+        print("Categories")
+        print("1. Food")
+        print("2. Recreation")
+        print("3. Gas")
+        print("4. Entertainment")
+        print("5. Personal")
+        print("6. Other")
+        try:
+            choice = int(input("Enter a choice: "))
+        except:
+            print("Please enter a number.")
+
+        if choice == 1:
+            return "Food"
+        elif choice == 2:
+            return "Recreation"
+        elif choice == 3:
+            return "Gas"
+        elif choice == 4:
+            return "Entertainment"
+        elif choice == 5:
+            return "Personal"
+        elif choice == 6:
+            return "Other"
+        else:
+            print("Choose the number that matches the category you want.")
 
 # Program functionality
 def create_user():
     first = input("Enter first name: ").capitalize()
     last = input("Enter last name: ").capitalize()
     init_balance = float(input("Enter initial balance: "))
-    fixed_expenses = get_fixed_expenses()
-    insert_user(User(first, last, init_balance, fixed_expenses))
-
-def select_user():
-    while True:
-        selected = input("Enter user's first name(Leave blank to go back): ").capitalize()
-        if selected == '':
-            return None
-        else:
-            try:
-                attribute_list = get_user_by_name(selected)
-                return User(attribute_list[1], attribute_list[2], attribute_list[3], json.loads(attribute_list[4]))
-            except:
-                print("User not found.")
+    fixed_expenses = get_fixed_expenses().dumps()
+    new_user = User(first, last, init_balance, fixed_expenses)
+    session.add(new_user)
+    session.commit()
 
 def user_menu():
     user = select_user()
@@ -155,14 +92,11 @@ def user_menu():
             choice = int(input("Enter a choice: "))
             match choice:
                 case 1:
-                    new_balance = float(input("Enter new balance: "))
-                    user.balance = new_balance
-                    update_balance(user, user.balance)
+                    pass
                 case 2:
-                    transactions_menu()
+                    pass
                 case 3:
-                    remove_user(user)
-                    break
+                    pass
                 case 4:
                     break
     else:
@@ -188,13 +122,12 @@ def main():
         choice = int(input("Enter a choice: "))
         match choice:
             case 1:
-                user_menu()
+                pass
             case 2:
-                create_user()
+                pass
             case 3:
-                list_users()
+                pass
             case 4:
                 break
 
 main()
-con.close()
