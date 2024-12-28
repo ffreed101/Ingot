@@ -4,7 +4,7 @@ import sys
 
 def ensure_virtualenv():
     """Ensure the script is running in the virtual environment."""
-    venv_python = os.path.join("venv", "Scripts", "python") if os.name == "nt" else os.path.join("venv", "bin", "python")
+    venv_python = os.path.join(".venv", "Scripts", "python") if os.name == "nt" else os.path.join(".venv", "bin", "python")
     
     # Check if the current Python interpreter matches the virtual environment's interpreter
     if sys.executable != os.path.abspath(venv_python):
