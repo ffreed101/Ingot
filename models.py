@@ -13,10 +13,9 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     first = Column(String)
     last = Column(String)
-    # balance = Column(Float, default=0)
     fixed_expenses = Column(String)
     transactions = relationship("Transaction", back_populates="user", lazy="dynamic")
 
