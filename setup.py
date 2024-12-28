@@ -5,21 +5,18 @@ import sys
 def create_virtualenv():
     """Create a virtual environment."""
     print("Creating virtual environment...")
-    # Use Python's built-in venv module to create the environment
-    subprocess.run([sys.executable, "-m", "venv", "venv"])
-    print("Virtual environment created in the 'venv' folder.")
+    subprocess.run([sys.executable, "-m", "venv", ".venv"], check=True)
+    print("Virtual environment created in the '.venv' folder.")
 
 def install_dependencies():
     """Install dependencies using pip."""
     print("Installing dependencies...")
-    if os.name == "nt":  # For Windows
-        activate_script = ".\\venv\\Scripts\\activate.bat"
-    else:  # For macOS/Linux
-        activate_script = "source ./venv/bin/activate"
+    
+    # Construct the path to the virtual environment's Python executable
+    venv_python = os.path.join(".venv", "Scripts", "python.exe") if os.name == "nt" else os.path.join(".venv", "bin", "python")
 
-    # Use a shell command to activate the virtual environment and install requirements
-    command = f"{activate_script} && pip install -r requirements.txt"
-    os.system(command)
+    # Use the virtual environment's Python to install dependencies
+    subprocess.run([venv_python, "-m", "pip", "install", "-r", "requirements.txt"], check=True)
     print("Dependencies installed!")
 
 def main():
@@ -28,3 +25,6 @@ def main():
     create_virtualenv()
     install_dependencies()
     print("Setup complete! You can now run the app.")
+
+if __name__ == "__main__":
+    main()
