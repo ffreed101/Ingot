@@ -15,50 +15,48 @@ As a new developer, I wanted to apply my skills I gained from college and from p
 
 ### Installing
 
-- Windows Users
-    - Run `setup.bat`
-- MacOS/Linux Users
-    - Run `setup.sh`
+* Clone the Repository:
+    ```bash
+    git clone git@github.com:ffreed101/Ingot.git
+    ```
+* Install Python if not already installed
+* Create a virtual environment:
+    ```bash
+    python -m venv venv
+    ```
+* Activate your virtual environment:
+    * Windows
+        ```bash
+        ./venv/Scripts/activate.bat
+        ```
+    * Mac/Linux
+        ```bash
+        ./venv/bin/activate.sh
+        ```
+* Install requirements:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 ### Executing program
 
 * How to run the program
-* Step-by-step bullets
-```
-code blocks for commands
-```
+* Run the main script:
+    ```bash
+    python main.py
+    ```
 
 ## Help
 
-Any advise for common problems or issues.
-```
-command to run if program contains helper info
-```
+Coming soon
 
 ## Authors
 
 Contributors names and contact info
 
-ex. Dominique Pizzie  
-ex. [@DomPizzie](https://twitter.com/dompizzie)
-
-## Version History
-
-* 0.2
-    * Various bug fixes and optimizations
-    * See [commit change]() or See [release history]()
-* 0.1
-    * Initial Release
+Falon Freed 
+[@ffreed101](https://twitter.com/ffreed101)
 
 ## License
 
-This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
-
-## Acknowledgments
-
-Inspiration, code snippets, etc.
-* [awesome-readme](https://github.com/matiassingers/awesome-readme)
-* [PurpleBooth](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
-* [dbader](https://github.com/dbader/readme-template)
-* [zenorocha](https://gist.github.com/zenorocha/4526327)
-* [fvcproductions](https://gist.github.com/fvcproductions/1bfc2d4aecb01a834b46)
+This project is licensed under the MIT License - see the LICENSE.md file for details
