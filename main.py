@@ -1,8 +1,5 @@
 import json
 from models import session, User, Transaction
-from activate import ensure_virtualenv
-
-ensure_virtualenv()
 
 # Menu Functions
 
