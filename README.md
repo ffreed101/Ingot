@@ -28,6 +28,15 @@ As a new developer, I wanted to apply my skills I gained from college and from p
     ```bash
     python -m venv venv
     ```
+* Install requirements:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+### Executing program
+
+* How to run the program
+
 * Activate your virtual environment:
     * Windows
         ```bash
@@ -37,14 +46,7 @@ As a new developer, I wanted to apply my skills I gained from college and from p
         ```bash
         source venv/bin/activate.sh
         ```
-* Install requirements:
-    ```bash
-    pip install -r requirements.txt
-    ```
 
-### Executing program
-
-* How to run the program
 * Run the main script:
     ```bash
     python main.py
