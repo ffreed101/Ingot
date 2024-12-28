@@ -20,6 +20,10 @@ As a new developer, I wanted to apply my skills I gained from college and from p
     git clone git@github.com:ffreed101/Ingot.git
     ```
 * Install Python if not already installed
+* CD into repo directory:
+    ```bash
+    cd Ingot
+    ```
 * Create a virtual environment:
     ```bash
     python -m venv venv
@@ -31,7 +35,7 @@ As a new developer, I wanted to apply my skills I gained from college and from p
         ```
     * Mac/Linux
         ```bash
-        ./venv/bin/activate.sh
+        source venv/bin/activate.sh
         ```
 * Install requirements:
     ```bash
