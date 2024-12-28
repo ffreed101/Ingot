@@ -18,9 +18,9 @@ class User(Base):
     last = Column(String)
     balance = Column(Float)
     fixed_expenses = Column(String)
-    transactions = relationship("Transaction", back_populates="users")
+    transactions = relationship("Transaction", back_populates="user")
 
-class Transactions(Base):
+class Transaction(Base):
     __tablename__ = "transactions"
 
     id = Column(Integer, primary_key=True)
