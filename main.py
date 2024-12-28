@@ -1,8 +1,5 @@
-import sqlite3
 import json
 from models import session, User, Transaction
-
-# TODO: Add a transactions attribute to user class that modifies the balance, as well as adding user-side functionality to add, edit, view, and remove transactions in user_menu. Transactions might be separate data table
         
 # Menu Functions
 
@@ -37,11 +34,13 @@ def user_menu():
             choice = int(input("Enter a choice: "))
             match choice:
                 case 1:
-                    pass
+                    edit_balance(user)
                 case 2:
-                    pass
+                    transactions_menu(user)
                 case 3:
-                    pass
+                    user_deleted = delete_user(user)
+                    if user_deleted:
+                        break
                 case 4:
                     break
     else:
@@ -61,11 +60,14 @@ def transactions_menu(user):
             case 1:
                 create_transaction(user)
             case 2:
-                pass
+                transaction = select_transaction(user)
+                edit_transaction_value(transaction)
             case 3:
-                pass
+                list_transactions(user)
             case 4:
-                pass
+                delete_transaction(user)
+            case 5:
+                break
 
 # Create Functions
 
@@ -75,7 +77,7 @@ def add_transaction(user_id, date, category, amount, note):
     session.commit()
 
 def create_transaction(user):
-    user_id = user.user_id
+    user_id = user.id
     date = "Not Implemented"
     category = get_category()
     amount = float(input("Enter transaction amount: "))
@@ -90,9 +92,70 @@ def create_user():
     new_user = User(first=first, last=last, fixed_expenses=fixed_expenses)
     session.add(new_user)
     session.commit()
-    add_transaction(new_user.id, "NI", "System", init_balance, "Initialized balance")
+    add_transaction(new_user.id, "Not Implemented", "System", init_balance, "Initialized balance")
 
-# Utility functions
+# Update Functions
+
+def update_balance(user, new_balance):
+    transaction_amount = new_balance - user.balance
+    add_transaction(user.id, "Not Implemented", "System", transaction_amount, "Balance adjustment")
+    
+def edit_balance(user):
+    new_balance = float(input("Enter new balance: "))
+    update_balance(user, new_balance)
+
+def edit_transaction_value(transaction):
+    while True:
+        print(f"Editing {transaction.note} transaction from {transaction.date}...")
+        print("1. Note")
+        print("2. Category")
+        print("3. Amount")
+        print("4. Exit")
+        choice = int(input("Select a value to modify: "))
+
+        match choice:
+            case 1:
+                new_note = input("Enter a new note: ")
+                transaction.note = new_note
+                session.commit()
+                break
+            case 2:
+                new_category = get_category()
+                transaction.category = new_category
+                session.commit()
+                break
+            case 3:
+                new_amount = float(input("Enter new amount: "))
+                transaction.amount = new_amount
+                session.commit()
+                break
+            case 4:
+                break
+            case _:
+                print("Invalid input.")
+
+# Delete Functions
+
+def delete_transaction(user):
+    transaction = select_transaction(user)
+    session.delete(transaction)
+    session.commit()
+    print("Transaction deleted successfully")
+
+def delete_user(user):
+    while True:
+        choice = input(f"Are you sure you want to delete user {user.first} {user.last}?(Y/N): ").lower()
+        if choice == 'y':
+            session.delete(user)
+            session.commit()
+            print("User Deleted")
+            return True
+        elif choice == 'n':
+            return False
+        else:
+            print("Invalid input.")
+
+# Utility Functions
 
 def get_category():
     while True:
@@ -134,16 +197,29 @@ def get_fixed_expenses():
     return expenses
 
 def select_user():
-    user = input("Enter user's first name: ")
+    user = input("Enter user's first name: ").capitalize()
     selected = session.query(User).filter_by(first=user).one_or_none()
     if selected == None:
         print("User not found.")
     else:
         return selected
     
+def select_transaction(user):
+    list_transactions(user)
+    transaction_id = int(input("Enter desired transaction ID: "))
+    transaction = session.query(Transaction).filter_by(id=transaction_id).one_or_none()
+    return transaction
+    
 def list_users():
     users = session.query(User).all()
     for i in users:
         print(f"{i.first} {i.last}")
+
+def list_transactions(user):
+    transactions = session.query(Transaction).filter_by(user_id=user.id).all()
+    labels = ("ID No.", "Note", "Category", "Amount", "Date")
+    print(f"{labels[0]:^8}{labels[1]:^20}{labels[2]:^20}{labels[3]:^9}{labels[4]:^15}")
+    for i in transactions:
+        print(f"{i.id:^8}{i.note:^20}{i.category:^20}{i.amount:^9}{i.date:^15}") 
 
 main()
