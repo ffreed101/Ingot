@@ -9,6 +9,12 @@ def create_virtualenv():
     subprocess.run([sys.executable, "-m", "venv", "venv"], check=True)
     print("Virtual environment created in the 'venv' folder.")
 
+def update_pip(venv_python):
+    """Update pip to the latest version."""
+    print("Checking if pip needs to be updated...")
+    subprocess.run([str(venv_python), "-m", "pip", "install", "--upgrade", "pip"], check=True)
+    print("pip has been updated to the latest version.")
+
 def install_dependencies():
     """Install dependencies using pip."""
     print("Installing dependencies...")
@@ -20,8 +26,18 @@ def install_dependencies():
     else:  # macOS/Linux
         venv_python = venv_path / "bin" / "python"
 
+    # Update pip before installing dependencies
+    update_pip(venv_python)
+
+    # Get the path to requirements.txt relative to the script's location
+    requirements_path = Path(__file__).parent / "requirements.txt"
+
+    # Ensure requirements.txt exists
+    if not requirements_path.exists():
+        raise FileNotFoundError(f"Could not find 'requirements.txt' at {requirements_path}")
+
     # Use the virtual environment's Python to install dependencies
-    subprocess.run([str(venv_python), "-m", "pip", "install", "-r", "requirements.txt"], check=True)
+    subprocess.run([str(venv_python), "-m", "pip", "install", "-r", str(requirements_path)], check=True)
     print("Dependencies installed!")
 
 def main():
