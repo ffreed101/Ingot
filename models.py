@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, func
 from sqlalchemy.orm import sessionmaker, relationship, declarative_base
 
 db_path = "sqlite:///database.db"
@@ -16,9 +16,14 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     first = Column(String)
     last = Column(String)
-    balance = Column(Float, default=0)
+    # balance = Column(Float, default=0)
     fixed_expenses = Column(String)
-    transactions = relationship("Transaction", back_populates="user")
+    transactions = relationship("Transaction", back_populates="user", lazy="dynamic")
+
+    @property
+    def balance(self):
+        return self.transactions.with_entities(func.sum(Transaction.amount)).scalar() or 0
+    
 
 class Transaction(Base):
     __tablename__ = "transactions"

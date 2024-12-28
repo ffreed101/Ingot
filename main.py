@@ -69,26 +69,28 @@ def transactions_menu(user):
 
 # Create Functions
 
+def add_transaction(user_id, date, category, amount, note):
+    new_transaction = Transaction(user_id=user_id, date=date, category=category, amount=amount, note=note)
+    session.add(new_transaction)
+    session.commit()
+
 def create_transaction(user):
     user_id = user.user_id
     date = "Not Implemented"
     category = get_category()
     amount = float(input("Enter transaction amount: "))
     note = input("Add a note: ")
-    new_transaction = Transaction(user_id=user_id, date=date, category=category, amount=amount, note=note)
-    session.add(new_transaction)
-    session.commit()
+    add_transaction(user_id, date, category, amount, note)
 
 def create_user():
     first = input("Enter first name: ").capitalize()
     last = input("Enter last name: ").capitalize()
     init_balance = float(input("Enter initial balance: "))
     fixed_expenses = json.dumps(get_fixed_expenses())
-    new_user = User(first=first, last=last, balance=init_balance, fixed_expenses=fixed_expenses)
+    new_user = User(first=first, last=last, fixed_expenses=fixed_expenses)
     session.add(new_user)
     session.commit()
-
-# Update Functions
+    add_transaction(new_user.id, "NI", "System", init_balance, "Initialized balance")
 
 # Utility functions
 
