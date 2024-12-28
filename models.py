@@ -16,7 +16,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     first = Column(String)
     last = Column(String)
-    balance = Column(Float)
+    balance = Column(Float, default=0)
     fixed_expenses = Column(String)
     transactions = relationship("Transaction", back_populates="user")
 
